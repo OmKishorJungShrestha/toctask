@@ -1,6 +1,5 @@
 /* TOC Lab: Implement a PDA for L = {set of all strings over {0,1} such that 0^n1^n} 
    acceptance by final state */
-
 #include <stdio.h>
 #include <string.h>
 #define MAX 100
@@ -24,10 +23,18 @@ int main() {
     char input[20];
     enum states curr_state = q0;
     s.top = -1;
-    
+int k=0;
     printf("\nEnter a binary string: ");
     fgets(input, sizeof(input), stdin);
     input[strcspn(input, "\n")] = '\0';  // Remove newline character if any
+
+    // Validate input: check for non-binary characters
+    for ( k = 0; k < strlen(input); k++) {
+        if (input[k] != '0' && input[k] != '1') {
+            printf("Invalid string: contains characters other than 0 and 1.\n");
+            return 1; // Exit on invalid input
+        }
+    }
 
     // Initial transition to push '$' and move to q1
     curr_state = delta(curr_state, 'e', 'e');
@@ -58,36 +65,36 @@ int main() {
 
 // Transition function for the PDA
 enum states delta(enum states s, char ch, char st_top) {
-    enum states curr_state = qr; // default to qr for undefined transition
+    enum states curr_state = qr; // Default to qr for undefined transition
     switch (s) {
         case q0:
             if (ch == 'e' && st_top == 'e') {
                 curr_state = q1;
-                push('$');
+                push('$'); // Push bottom marker
             }
             break;
 
         case q1:
             if (ch == '0' && (st_top == '$' || st_top == '0')) {
                 curr_state = q1;
-                push('0');  // Push '0' for each '0' read
+                push('0'); // Push '0' for each '0' read
             } else if (ch == '1' && st_top == '0') {
                 curr_state = q2;
-                pop();  // Start popping '0's for each '1' read
+                pop(); // Start popping '0's for each '1' read
             } else {
-                curr_state = qr;
+                curr_state = qr; // Reject on invalid transition
             }
             break;
 
         case q2:
             if (ch == '1' && st_top == '0') {
                 curr_state = q2;
-                pop();  // Continue popping '0's for each '1'
+                pop(); // Continue popping '0's for each '1'
             } else if (ch == '\0' && st_top == '$') {
-                curr_state = qf;  // Accept if input ends and only '$' remains
+                curr_state = qf; // Accept if input ends and only '$' remains
                 pop();
             } else {
-                curr_state = qr;
+                curr_state = qr; // Reject on invalid transition
             }
             break;
     }
@@ -117,4 +124,5 @@ char get_stack_top() {
     }
     return 'e'; // Return 'e' if the stack is empty
 }
+
 
