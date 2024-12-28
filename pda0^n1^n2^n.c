@@ -25,7 +25,14 @@ int main() {
     printf("\nEnter a ternary string (containing 0, 1, 2): ");
     fgets(input, sizeof(input), stdin);
     input[strcspn(input, "\n")] = '\0';  // Remove newline character if any
-
+/*
+ for (i = 0; i < strlen(input); i++) {
+        if (input[i] != '0' && input[i] != '1'&& input[i] != '2') {
+            printf("\nInvalid string: contains characters other than 0 and 1.\n");
+            return 1; // Exit on invalid input
+        }
+    }
+    */
     // Initial transition to push '$' and move to q1
     curr_state = delta(curr_state, 'e', 'e');
 
